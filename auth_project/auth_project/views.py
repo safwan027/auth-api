@@ -6,18 +6,19 @@ from  rest_framework import status
 
 
 
-class User1(APIView):
-    def get(self, request):
+class UserView(APIView):
+    def get(self,request): 
         data = User.objects.all()
         serializer = UserSerializers(data, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data) 
     
+
     def post(self,request):
         data = request.data
         serializer = UserSerializers(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data)
         return Response(serializer.errors)
 
 
