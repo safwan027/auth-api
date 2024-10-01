@@ -1,25 +1,39 @@
 from rest_framework.decorators import api_view,APIView
 from rest_framework.response import Response
-from django.contrib.auth.models import User
-from . serializer import UserSerializers
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
+from . serializer import RegisterSerializer,LoginSerializer
 from  rest_framework import status
 
 
 
-class UserView(APIView):
-    def get(self,request): 
-        data = User.objects.all()
-        serializer = UserSerializers(data, many=True)
-        return Response(serializer.data) 
-    
-
+class RegisterAPI(APIView):
     def post(self,request):
         data = request.data
-        serializer = UserSerializers(data=data)
+        serializer = RegisterSerializer(data=data)
+
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
+ 
+
+class LoginAPI(APIView):
+    def post(self,request):
+        data = request.data
+        serializer = LoginSerializer(data = data) 
+
+        if not serializer.is_valid():
+            return Response(serializer.errors)
+        user = authenticate(username = serializer.data['username'],email = serializer.data['email']) 
+         
+    
+        if not user:
+            return Response({"message":"Invalid"})
+        token, _ = Token.objects.get_or_create(user = user)
+        return Response({"message":"Login successfull","token":str(token)})
+       
+ 
 
 
 
