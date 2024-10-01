@@ -23,6 +23,7 @@ class LoginAPI(APIView):
         data = request.data
         serializer = LoginSerializer(data = data) 
 
+
         if not serializer.is_valid():
             return Response(serializer.errors)
         user = authenticate(username = serializer.data['username'],email = serializer.data['email']) 
@@ -30,8 +31,8 @@ class LoginAPI(APIView):
     
         if not user:
             return Response({"message":"Invalid"})
-        token, _ = Token.objects.get_or_create(user = user)
-        return Response({"message":"Login successfull","token":str(token)})
+        token, _ = Token.objects.get_or_create(user=user) 
+        return Response({"message":"Login successfull","token":str(token)})  
        
  
 
