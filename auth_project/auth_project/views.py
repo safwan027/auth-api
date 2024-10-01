@@ -1,9 +1,9 @@
-from rest_framework.decorators import api_view,APIView
+from rest_framework.decorators import APIView
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
+from rest_framework.authentication import TokenAuthentication
 from . serializer import RegisterSerializer,LoginSerializer
-from  rest_framework import status
 
 
 
@@ -14,25 +14,31 @@ class RegisterAPI(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data)
+            return Response({"Message":"User created successfully !"})
         return Response(serializer.errors)
+        
+       
+        
  
 
 class LoginAPI(APIView):
     def post(self,request):
         data = request.data
+        print("Raw data",data)
         serializer = LoginSerializer(data = data) 
 
-
-        if not serializer.is_valid():
-            return Response(serializer.errors)
-        user = authenticate(username = serializer.data['username'],email = serializer.data['email']) 
+        
+        if serializer.is_valid():
+            user = authenticate(username = serializer.data['username'],password = serializer.data['password']) 
+            return Response({"message":"Its valid and authenticated","Result":user})
+        return Response(serializer.errors)
+        
          
     
-        if not user:
-            return Response({"message":"Invalid"})
-        token, _ = Token.objects.get_or_create(user=user) 
-        return Response({"message":"Login successfull","token":str(token)})  
+        #if not user:
+        #    return Response({"message":"Invalid"})
+        #token, _  = Token.objects.get_or_create(user=user) 
+        #return Response({"message":"Login successfull","token":str(token)})  
        
  
 
