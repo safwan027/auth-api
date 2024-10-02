@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from . serializer import RegisterSerializer,LoginSerializer
+from rest_framework import status
 
 
 
@@ -14,7 +15,7 @@ class RegisterAPI(APIView):
 
         if serializer.is_valid():
             serializer.save()
-            return Response({"Message":"User created successfully !"})
+            return Response({"Message":"User created successfully !"},status=status.HTTP_201_CREATED)
         return Response(serializer.errors)
         
        
